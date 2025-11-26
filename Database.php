@@ -3,7 +3,7 @@ function connectDatabase() {
     $host = 'localhost';
     $db   = 'etudiant';
     $user = 'root';
-    $pass = '';
+    $pass = ' ';
     $charset = 'utf8mb4';
     $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
     $options = [
@@ -18,4 +18,5 @@ function connectDatabase() {
         throw new \PDOException($e->getMessage(), (int)$e->getCode());
     }
 }
+
 ?>

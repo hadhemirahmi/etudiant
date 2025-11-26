@@ -1,132 +1,155 @@
+<?php
+session_start();
+
+// Vérification : seul un enseignant peut accéder
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'enseignant') {
+    header("Location: login.php");
+    exit;
+}
+
+include 'Database.php';
+$pdo = connectDatabase();
+
+$teacher_id = $_SESSION['user_id'];
+$teacher_name = $_SESSION['name'];
+
+// === Récupération des cours de l'enseignant avec le nombre d'étudiants inscrits ===
+$courses = $pdo->prepare("
+    SELECT 
+        c.id,
+        c.name,
+        c.code,
+        c.description,
+        (SELECT COUNT(*) FROM enrollments e WHERE e.course_id = c.id) AS nb_students
+    FROM courses c
+    JOIN course_assignments ca ON c.id = ca.course_id
+    WHERE ca.teacher_id = ?
+    ORDER BY c.name ASC
+");
+$courses->execute([$teacher_id]);
+$courses = $courses->fetchAll();
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Gérer cours</title>
-  
-  <!-- ICONS + BOOTSTRAP -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mes cours - Enseignant</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
   <style>
-    body {
-      background: #f4f7fc;
-      font-family: 'Poppins', sans-serif;
-    }
-
-    /* Navbar */
-    .navbar {
-      background: #ffffff !important;
-      box-shadow: 0 2px 15px rgba(0,0,0,0.06);
-    }
-
-    .navbar-brand {
-      font-size: 26px;
-      font-weight: 700;
-      color: #0d1b3e;
-    }
-
-    .navbar .nav-link {
-      font-weight: 500;
-      margin-left: 12px;
-      transition: 0.25s;
-    }
-
-    .navbar .nav-link:hover {
-      color: #4f46e5 !important;
-    }
-
-    /* Sidebar */
+    body { background: #f8f9fa; font-family: 'Poppins', sans-serif; }
+    .navbar { background: #fff; box-shadow: 0 2px 15px rgba(0,0,0,0.1); position: fixed; top: 0; width: 100%; z-index: 1000; }
     .sidebar {
-      width: 250px;
-      background: #ffffff;
-      min-height: 100vh;
-      padding-top: 80px;
-      position: fixed;
-      left: 0;
-      top: 0;
-      box-shadow: 2px 0 18px rgba(0,0,0,0.07);
-      margin-top: 20px;
+      width: 260px; background: #ffffff; min-height: 100vh; position: fixed; left: 0; top: 76px;
+      box-shadow: 2px 0 18px rgba(0,0,0,0.07); padding-top: 30px;
     }
-
-    .sidebar h4 {
-      margin-left: 22px;
-      margin-bottom: 20px;
-      font-weight: 700;
-    }
-
+    .sidebar h4 { margin-left: 25px; color: #4f46e5; font-weight: 700; }
     .sidebar .nav-link {
-      color: #0d1b3e;
-        padding: 12px 20px;
-        font-size: 15px;
-        font-weight: 500;
-        transition: 0.25s;
+      color: #0d1b3e; padding: 14px 25px; font-weight: 500; border-radius: 8px; margin: 5px 15px;
+      display: flex; align-items: center; transition: all 0.3s;
     }
-    .sidebar .nav-link:hover {
-      background: #f0f4ff;
-      color: #4f46e5;
-      text-decoration: none;
+    .sidebar .nav-link i { margin-right: 12px; width: 25px; }
+    .sidebar .nav-link:hover, .sidebar .nav-link.active {
+      background: #eef3ff; color: #4f46e5; padding-left: 30px;
     }
-    .sidebar .nav-link.active {
-      background: #eef3ff;
-      color: #4f46e5;
-      text-decoration: none;
+    .sidebar .nav-link.active { background: #4f46e5; color: white !important; }
+    .content { margin-left: 260px; padding: 100px 40px 40px; }
+    .course-card {
+      background: white; border-radius: 16px; box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+      transition: all 0.3s; overflow: hidden; height: 100%;
     }
-    .sidebar i {
-      margin-right: 12px;
+    .course-card:hover { transform: translateY(-10px); box-shadow: 0 15px 40px rgba(0,0,0,0.15); }
+    .course-header {
+      background: linear-gradient(135deg, #4f46e5, #7c3aed);
+      color: white; padding: 20px; text-align: center;
     }
-    </style>
+    .course-body { padding: 25px; }
+    .course-code { font-size: 14px; opacity: 0.9; }
+    .btn-action { border-radius: 50px; padding: 8px 20px; font-size: 14px; }
+  </style>
 </head>
 <body>
+
   <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-light px-4 py-3">
-    <a class="navbar-brand" href="#">enseignant Panel</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navMenu">
-      <ul class="navbar-nav mx-auto ">
-+          <li class="nav-item"><a class="nav-link " href="./indexenseignant.php">Home</a></li>
-+          <li class="nav-item"><a class="nav-link" href="./Dashboard.php">tableaux de bord</a></li>
-      </ul>
+  <nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+      <a class="navbar-brand fw-bold" href="Dashboard.php">Gestion Étudiants</a>
+      <div class="d-flex align-items-center gap-3">
+        <span class="text-muted">Bonjour, <strong><?= htmlspecialchars($teacher_name) ?></strong></span>
+        <a href="logout.php" class="btn btn-outline-danger rounded-pill px-4">Déconnexion</a>
+      </div>
     </div>
   </nav>
-    <!-- Sidebar -->    
-    <div class="sidebar">
-    <h4 class="text-primary fw-bold">enseignant Panel</h4>
-        <ul class="nav flex-column">
-            <li class="nav-item">
-            <a href="./mescours.php" class="nav-link"><i class="fa fa-book me-2"></i> mes cours</a>
-            </li>
-            <li class="nav-item">
-            <a href="./mesetudiants.php" class="nav-link"><i class="fa fa-users me-2"></i> mes étudiants</a>
-            </li>
-            <li class="nav-item">
-            <a href="./mesnotes.php" class="nav-link"><i class="fa fa-pen-to-square me-2"></i> saisir notes</a>
-            </li>
-            <li class="nav-item">
-                <a href="./absence.php" class="nav-link"><i class="fa fa-calendar-check me-2"></i> absence</a>
-            </li>
 
-        </ul>
+  <!-- Sidebar Enseignant -->
+  <aside class="sidebar">
+    <h4>Espace Enseignant</h4>
+    <ul class="nav flex-column">
+      <li><a href="Dashboard.php" class="nav-link">Tableau de bord</a></li>
+      <li><a href="mescours.php" class="nav-link">Mes cours</a></li>
+      <li><a href="mesetudiants.php" class="nav-link">Mes étudiants</a></li>
+      <li><a href="absence.php" class="nav-link">Prise d'absences</a></li>
+      <li><a href="mesnotes.php" class="nav-link active">Mes notes</a></li>
+    </ul>
+  </aside>
+
+  <!-- Contenu principal -->
+  <main class="content">
+    <div class="container-fluid">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h2 class="fw-bold text-dark"><i class="fa fa-book-open text-primary"></i> Mes cours</h2>
+          <p class="text-muted">Vous enseignez actuellement <strong><?= count($courses) ?></strong> cours</p>
+        </div>
+      </div>
+
+      <?php if (empty($courses)): ?>
+        <div class="text-center py-5">
+          <i class="fa fa-book-open fa-5x text-muted mb-4 opacity-25"></i>
+          <h4 class="text-muted">Aucun cours assigné</h4>
+          <p class="text-muted">Contactez l'administrateur pour vous attribuer des cours.</p>
+        </div>
+      <?php else: ?>
+        <div class="row g-4">
+          <?php foreach ($courses as $c): ?>
+            <div class="col-md-6 col-lg-4">
+              <div class="course-card">
+                <div class="course-header">
+                  <h5 class="mb-1"><?= htmlspecialchars($c['name']) ?></h5>
+                  <?php if ($c['code']): ?>
+                    <div class="course-code">Code : <?= htmlspecialchars($c['code']) ?></div>
+                  <?php endif; ?>
+                </div>
+                <div class="course-body">
+                  <?php if ($c['description']): ?>
+                    <p class="text-muted small mb-3"><?= htmlspecialchars(substr($c['description'], 0, 100)) ?>...</p>
+                  <?php endif; ?>
+                  <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                      <i class="fa fa-users text-primary"></i>
+                      <strong><?= $c['nb_students'] ?></strong> étudiant(s)
+                    </div>
+                    <span class="badge bg-success fs-6"><?= $c['nb_students'] > 0 ? 'Actif' : 'Vide' ?></span>
+                  </div>
+                  <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <a href="absence.php?course_id=<?= $c['id'] ?>" class="btn btn-outline-danger btn-action">
+                      <i class="fa fa-calendar-times"></i> Absences
+                    </a>
+                    <a href="teacher_notes.php?course_id=<?= $c['id'] ?>" class="btn btn-outline-primary btn-action">
+                      <i class="fa fa-pen-to-square"></i> Notes
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <?php endforeach; ?>
+        </div>
+      <?php endif; ?>
     </div>
-    <div class="content" style="margin-left: 250px; padding: 20px;">
-      <form>
-         <div class="mb-3">
-          <label for="codemat" class="form-label">code matière</label>
-          <input type="text" class="form-control" id="codemat" name="codemat" placeholder="Entrez le nom complet" required />
-        </div>
-        <div class="mb-3">
-          <label for="nommat" class="form-label">Nom matière</label>
-          <input type="text" class="form-control" id="nommat" name="nommat" placeholder="Entrez le nom complet" required />
-        </div>
-        <div class="mb-3">
-          <label for="description" class="form-label">Description</label>
-          <textarea class="form-control" id="description" name="description" rows="4" placeholder="Entrez la description du cours" required></textarea>
-        </div>
-        <button type="submit" class="btn btn-primary">Enregistrer</button>
-      </form>
-    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
