@@ -12,7 +12,6 @@ $pdo = connectDatabase();
 
 $message = '';
 
-// === Ajout d'un étudiant ===
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_student'])) {
     $name     = trim($_POST['name']);
     $email    = trim($_POST['email']);
@@ -40,7 +39,6 @@ $students = $pdo->query("
     SELECT id, name, email, created_at 
     FROM users 
     WHERE role = 'etudiant' 
-    ORDER BY name ASC
 ")->fetchAll();
 ?>
 
