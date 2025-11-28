@@ -1,7 +1,5 @@
 <?php
 session_start();
-
-// Vérification : seul un admin peut accéder
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     header("Location: login.php");
     exit;
@@ -34,12 +32,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_student'])) {
     }
 }
 
-// === Récupération de tous les étudiants ===
 $students = $pdo->query("
     SELECT id, name, email, created_at 
     FROM users 
-    WHERE role = 'etudiant' 
-")->fetchAll();
+    WHERE role = 'etudiant' ")->fetchAll();
 ?>
 
 <!DOCTYPE html>
@@ -56,8 +52,6 @@ $students = $pdo->query("
     body { background: #f4f7fc; font-family: 'Poppins', sans-serif; margin: 0; }
     .navbar { background: #fff !important; box-shadow: 0 2px 15px rgba(0,0,0,0.06); position: fixed; top: 0; width: 100%; z-index: 1000; }
     .navbar-brand { font-size: 26px; font-weight: 700; color: #0d1b3e; }
-
-    /* Sidebar */
     .sidebar {
       width: 260px; background: #ffffff; min-height: 100vh; position: fixed; left: 0; top: 76px;
       box-shadow: 2px 0 18px rgba(0,0,0,0.07); padding-top: 30px; z-index: 999;
@@ -82,7 +76,6 @@ $students = $pdo->query("
 </head>
 <body>
 
-  <!-- Navbar -->
   <nav class="navbar navbar-expand-lg">
     <div class="container-fluid">
       <a class="navbar-brand" href="#">Gestion Étudiants <span class="text-primary">.</span></a>

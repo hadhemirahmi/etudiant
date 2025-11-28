@@ -6,11 +6,9 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
 }
 
 include '../Database.php';
-$pdo = connectDatabase(); // ← $pdo est bien défini ici
-
+$pdo = connectDatabase(); 
 $message = '';
 
-// === Ajout d'un cours ===
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_course'])) {
     $name       = trim($_POST['course_name']);
     $code       = strtoupper(trim($_POST['course_code']));
@@ -33,8 +31,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_course'])) {
         $message = '<div class="alert alert-warning">Tous les champs obligatoires doivent être remplis.</div>';
     }
 }
-
-// === Liste des cours ===
 $courses = $pdo->query("SELECT * FROM courses ORDER BY name ASC")->fetchAll(); // ← $pdo bien utilisé
 ?>
 
@@ -62,8 +58,6 @@ $courses = $pdo->query("SELECT * FROM courses ORDER BY name ASC")->fetchAll(); /
   </style>
 </head>
 <body>
-
-  <!-- Navbar -->
   <nav class="navbar navbar-expand-lg">
     <div class="container-fluid">
       <a class="navbar-brand" href="#">Gestion Étudiants <span class="text-primary">.</span></a>
@@ -74,7 +68,6 @@ $courses = $pdo->query("SELECT * FROM courses ORDER BY name ASC")->fetchAll(); /
     </div>
   </nav>
 
-  <!-- Sidebar -->
   <aside class="sidebar">
     <h4>Admin Panel</h4>
     <ul class="nav flex-column">
@@ -86,8 +79,6 @@ $courses = $pdo->query("SELECT * FROM courses ORDER BY name ASC")->fetchAll(); /
       <li class="nav-item"><a href="absence.php" class="nav-link">Absences</a></li>
     </ul>
   </aside>
-
-  <!-- Contenu principal -->
   <main class="content">
     <div class="container-fluid">
       <h2 class="mb-4 fw-bold text-dark">Gérer les cours</h2>
@@ -95,7 +86,6 @@ $courses = $pdo->query("SELECT * FROM courses ORDER BY name ASC")->fetchAll(); /
       <?php if ($message) echo $message; ?>
 
       <div class="row g-4">
-        <!-- Formulaire d'ajout -->
         <div class="col-lg-5">
           <div class="card-custom">
             <h4 class="mb-4">Ajouter un nouveau cours</h4>
@@ -121,8 +111,6 @@ $courses = $pdo->query("SELECT * FROM courses ORDER BY name ASC")->fetchAll(); /
             </form>
           </div>
         </div>
-
-        <!-- Liste des cours -->
         <div class="col-lg-7">
           <div class="card-custom">
             <h4 class="mb-4">Liste des cours (<?= count($courses) ?>)</h4>
