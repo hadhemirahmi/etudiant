@@ -13,9 +13,12 @@ $message = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_student'])) {
     $name     = trim($_POST['name']);
     $email    = trim($_POST['email']);
-    $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+    $passwd   = trim($_POST['passwd']);   // Correction ici
 
-    if (!empty($name) && !empty($email) && !empty($_POST['password'])) {
+    // Hash du mot de passe corrigé
+    $password = password_hash($passwd, PASSWORD_DEFAULT);
+
+    if (!empty($name) && !empty($email) && !empty($passwd)) {
         try {
             $stmt = $pdo->prepare("INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, 'etudiant')");
             $stmt->execute([$name, $email, $password]);
@@ -35,7 +38,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_student'])) {
 $students = $pdo->query("
     SELECT id, name, email, created_at 
     FROM users 
-    WHERE role = 'etudiant' ")->fetchAll();
+    WHERE role = 'etudiant' 
+")->fetchAll();
 ?>
 
 <!DOCTYPE html>
@@ -124,6 +128,7 @@ $students = $pdo->query("
               </div>
               <div class="mb-3">
                 <label class="form-label fw-semibold">Mot de passe</label>
+                <!-- Correction ici : name="passwd" -->
                 <input type="password" name="passwd" class="form-control" placeholder="Minimum 6 caractères" minlength="6" required>
               </div>
               <button type="submit" class="btn btn-primary w-100">
