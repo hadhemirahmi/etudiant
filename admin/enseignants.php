@@ -198,8 +198,8 @@ $teachers = $pdo->query("
                         <td><?= htmlspecialchars($t['email']) ?></td>
                         <td><?= htmlspecialchars($t['department'] ?? 'Non renseigné') ?></td>
                         <td>
-                          <button class="btn btn-sm btn-warning"><i class="fa fa-edit"></i></button>
-                          <button class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></button>
+                          <button class="btn btn-sm btn-warning"><i class="fa fa-edit"></i> <a href="edit_teacher.php?id=<?= $t['id'] ?>">Modifier</a></button>
+                          <button class="btn btn-sm btn-danger"><i class="fa fa-trash"></i> <a href="delete_teacher.php?id=<?= $t['id'] ?>" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet enseignant ?');">Supprimer</a></button>
                         </td>
                       </tr>
                     <?php endforeach; ?>
