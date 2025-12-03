@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($user['role'] == 'admin') {
             header('Location: /etudiant/admin/indexadmin.php');
         } elseif ($user['role'] == 'enseignant') {
-            header('Location: /etudiant/ensiegnant/indexenseignant.php');
+            header('Location: /etudiant/enseignant/indexenseignant.php');
         } elseif ($user['role'] == 'etudiant') {
             header('Location: /etudiant/etudiant/indexetudiant.php');
         }

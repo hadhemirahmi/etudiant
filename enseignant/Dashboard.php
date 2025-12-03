@@ -7,7 +7,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'enseignant') {
     exit;
 }
 
-include 'Database.php';
+include '../Database.php';
 $pdo = connectDatabase();
 
 $teacher_id = $_SESSION['user_id'];
@@ -90,7 +90,7 @@ $recent_absences = $recent_absences->fetchAll();
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
   <style>
-    body { background: linear-gradient(135deg, #667eea, #764ba2); font-family: 'Poppins', sans-serif; min-height: 100vh; }
+   
     .navbar { background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); box-shadow: 0 8px 32px rgba(0,0,0,0.1); }
     .sidebar {
       width: 260px; background: #ffffff; min-height: 100vh; position: fixed; left: 0; top: 76px;
@@ -134,11 +134,11 @@ $recent_absences = $recent_absences->fetchAll();
   <aside class="sidebar">
     <h4>Espace Enseignant</h4>
     <ul class="nav flex-column">
-      <li><a href="Dashboard.php" class="nav-link">Tableau de bord</a></li>
-      <li><a href="mescours.php" class="nav-link">Mes cours</a></li>
-      <li><a href="mesetudiants.php" class="nav-link">Mes étudiants</a></li>
-      <li><a href="absence.php" class="nav-link">Prise d'absences</a></li>
-      <li><a href="mesnotes.php" class="nav-link active">Mes notes</a></li>
+      <li><a href="Dashboard.php" class="nav-link active"><i class="fa fa-tachometer-alt me-2"></i> Tableau de bord</a></li>
+      <li><a href="mescours.php" class="nav-link"><i class="fa fa-book me-2"></i> Mes cours</a></li>
+      <li><a href="mesetudiants.php" class="nav-link"><i class="fa fa-users me-2"></i> Mes étudiants</a></li>
+      <li><a href="absence.php" class="nav-link"><i class="fa fa-calendar-times me-2"></i> Prise d'absences</a></li>
+      <li><a href="mesnotes.php" class="nav-link "><i class="fa fa-clipboard-check me-2"></i> Mes notes</a></li>
     </ul>
   </aside>
 
@@ -147,7 +147,7 @@ $recent_absences = $recent_absences->fetchAll();
     <div class="container-fluid">
 
       <!-- Bienvenue -->
-      <div class="text-white mb-5">
+      <div class="text-dark mb-5">
         <h1 class="fw-bold display-5">Bonjour, <?= htmlspecialchars($teacher_name) ?> !</h1>
         <p class="lead opacity-90">Voici votre tableau de bord enseignant</p>
       </div>

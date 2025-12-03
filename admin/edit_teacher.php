@@ -72,6 +72,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ");
             $stmt->execute([$teacher_id]);
             $teacher = $stmt->fetch();
+            header("location: enseignants.php");
+            exit;
 
         } catch (PDOException $e) {
             $message = "Erreur : " . $e->getMessage();
@@ -113,11 +115,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="mb-3">
             <label class="form-label">Département</label>
             <input type="text" name="department" class="form-control" value="<?= htmlspecialchars($teacher['department'] ?? '') ?>">
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Téléphone</label>
-            <input type="text" name="phone" class="form-control" value="<?= htmlspecialchars($teacher['phone'] ?? '') ?>">
         </div>
 
         <button class="btn btn-primary">Mettre à jour</button>

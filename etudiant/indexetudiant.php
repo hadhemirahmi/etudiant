@@ -74,8 +74,9 @@
         </ul>
 
         <!-- Espace déconnexion -->
-        <div class="d-flex gap-3">
-          <a href="logout.php" class="btn btn-danger px-4 py-2 rounded-pill fw-semibold">Logout</a>
+        <div class="d-flex align-items-center gap-3">
+           
+          <a href="../logout.php" class="btn btn-outline-danger rounded-pill px-4">Déconnexion</a> 
         </div>
 
       </div>
@@ -120,7 +121,7 @@
 
         <!-- Image -->
         <div class="col-lg-6 text-center mt-4 mt-lg-0">
-          <img src="etudiant.png" width="460" alt="Student Image">
+          <img src="../téléchargement.png" width="460" alt="Student Image">
         </div>
 
       </div>

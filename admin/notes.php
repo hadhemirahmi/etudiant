@@ -62,34 +62,70 @@ $courses = $pdo->query("SELECT id, name FROM courses ORDER BY name")->fetchAll()
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
   <style>
-    body { background: #f5f7fb; font-family: "Poppins", sans-serif; }
-    .navbar { background: white !important; box-shadow: 0 2px 10px rgba(0,0,0,0.07); }
-    .sidebar { width: 250px; background: #fff; height: 100vh; position: fixed; top: 65px; left: 0; padding-top: 20px; box-shadow: 2px 0 15px rgba(0,0,0,0.05); }
-    .sidebar .nav-link { padding: 12px 20px; font-size: 15px; font-weight: 500; color: #333; transition: 0.3s ease; border-radius: 8px; margin: 4px 12px; }
-    .sidebar .nav-link:hover, .sidebar .nav-link.active { background: #eef2ff; color: #4f46e5 !important; }
-    .sidebar i { margin-right: 10px; }
-    .content { margin-left: 270px; padding-top: 90px; }
-    .card-custom { background: #fff; padding: 25px; border-radius: 15px; box-shadow: 0 3px 20px rgba(0,0,0,0.06); }
-    .table th { background: #f1f3f9; }
-    .badge { font-size: 0.9rem; padding: 6px 10px; }
+    body { background: #f4f7fc; font-family: 'Poppins', sans-serif; margin: 0; }
+    .navbar { background: #fff !important; box-shadow: 0 2px 15px rgba(0,0,0,0.06); position: fixed; top: 0; width: 100%; z-index: 1000; }
+    .navbar-brand { font-size: 26px; font-weight: 700; color: #0d1b3e; }
+
+    .sidebar {
+      width: 260px;
+      background: #ffffff;
+      min-height: 100vh;
+      position: fixed;
+      left: 0;
+      top: 76px;
+      box-shadow: 2px 0 18px rgba(0,0,0,0.07);
+      padding-top: 30px;
+      z-index: 999;
+    }
+    .sidebar h4 { margin-left: 25px; margin-bottom: 25px; font-weight: 700; color: #4f46e5; }
+    .sidebar .nav-link {
+      color: #0d1b3e; padding: 14px 25px; font-size: 15px; font-weight: 500;
+      border-radius: 8px; margin: 5px 15px; display: flex; align-items: center;
+      transition: all 0.3s;
+    }
+    .sidebar .nav-link i { font-size: 18px; margin-right: 12px; width: 25px; }
+    .sidebar .nav-link:hover, .sidebar .nav-link.active {
+      background: #eef3ff; color: #4f46e5; padding-left: 30px;
+    }
+    .sidebar .nav-link.active { background: #4f46e5; color: white !important; }
+    .content {
+      margin-left: 260px;
+      padding: 100px 40px 40px;
+    }
+    .card-custom {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+      padding: 30px;
+    }
+    .table th { background: #4f46e5; color: white; }
   </style>
 </head>
 
 <body>
-<nav class="navbar navbar-expand-lg fixed-top">
-  <div class="container-fluid px-4">
-    <a class="navbar-brand fw-bold fs-4 text-primary" href="#">📘 Gestion étudiants</a>
-    <div class="d-flex align-items-center gap-3">
-      <span class="text-muted fw-semibold">Admin</span>
-      <a href="logout.php" class="btn btn-outline-danger rounded-pill px-4">
-        <i class="fa fa-sign-out-alt"></i> Déconnexion
-      </a>
+  <nav class="navbar navbar-expand-lg bg-white py-3 shadow-sm">
+    <div class="container">
+      <a class="navbar-brand fs-3 fw-bold" href="#">Système gestion des étudiants <span class="text-primary">.</span></a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navMenu">
+        <ul class="navbar-nav mx-auto ">
+          <li class="nav-item"><a class="nav-link active" href="indexadmin.php">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="Dashboard.php">Tableaux de bord</a></li>
+        </ul>
+        <div class="d-flex align-items-center gap-3">
+           
+          <a href="../logout.php" class="btn btn-outline-danger rounded-pill px-4">Déconnexion</a> 
+        </div>
+      </div>
     </div>
-  </div>
-</nav>
+  </nav>
 
 <aside class="sidebar">
-  <h5 class="fw-bold text-primary px-3 mb-3">Admin Panel</h5>
+  <h4>Admin Panel</h4>
   <ul class="nav flex-column">
     <li class="nav-item"><a href="Dashboard.php" class="nav-link"><i class="fa fa-tachometer-alt"></i> Tableau de bord</a></li>
     <li class="nav-item"><a href="etudiants.php" class="nav-link"><i class="fa fa-users"></i> Gérer étudiants</a></li>
@@ -177,8 +213,10 @@ $courses = $pdo->query("SELECT id, name FROM courses ORDER BY name")->fetchAll()
                       <td><?= htmlspecialchars($n['type']) ?></td>
                       <td><?= date('d/m/Y H:i', strtotime($n['date'])) ?></td>
                       <td>
-                        <a class="btn btn-warning btn-sm"><i class="fa fa-edit"></i></a>
-                        <a class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></a>
+                        <span>
+                        <a class="btn btn-warning btn-sm" href="edit_notes.php?id=<?= $n['id'] ?>"><i class="fa fa-edit"></i></a>
+                        <a class="btn btn-danger btn-sm" href="delete_note.php?id=<?= $n['id'] ?>" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette note ?');"><i class="fa fa-trash"></i></a>
+                        </span>
                       </td>
                     </tr>
                   <?php endforeach; ?>

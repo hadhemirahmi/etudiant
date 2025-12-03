@@ -45,25 +45,64 @@ $courses = $pdo->query("SELECT * FROM courses ORDER BY name ASC")->fetchAll(); /
   <style>
     body { background: #f4f7fc; font-family: 'Poppins', sans-serif; margin: 0; }
     .navbar { background: #fff !important; box-shadow: 0 2px 15px rgba(0,0,0,0.06); position: fixed; top: 0; width: 100%; z-index: 1000; }
-    .sidebar { width: 260px; background: #ffffff; min-height: 100vh; position: fixed; left: 0; top: 76px; box-shadow: 2px 0 18px rgba(0,0,0,0.07); padding-top: 30px; z-index: 999; }
+    .navbar-brand { font-size: 26px; font-weight: 700; color: #0d1b3e; }
+
+    /* Sidebar */
+    .sidebar {
+      width: 260px;
+      background: #ffffff;
+      min-height: 100vh;
+      position: fixed;
+      left: 0;
+      top: 76px;
+      box-shadow: 2px 0 18px rgba(0,0,0,0.07);
+      padding-top: 30px;
+      z-index: 999;
+    }
     .sidebar h4 { margin-left: 25px; margin-bottom: 25px; font-weight: 700; color: #4f46e5; }
-    .sidebar .nav-link { color: #0d1b3e; padding: 14px 25px; font-size: 15px; font-weight: 500; border-radius: 8px; margin: 5px 15px; display: flex; align-items: center; transition: all 0.3s; }
+    .sidebar .nav-link {
+      color: #0d1b3e; padding: 14px 25px; font-size: 15px; font-weight: 500;
+      border-radius: 8px; margin: 5px 15px; display: flex; align-items: center;
+      transition: all 0.3s;
+    }
     .sidebar .nav-link i { font-size: 18px; margin-right: 12px; width: 25px; }
-    .sidebar .nav-link:hover, .sidebar .nav-link.active { background: #eef3ff; color: #4f46e5; padding-left: 30px; }
+    .sidebar .nav-link:hover, .sidebar .nav-link.active {
+      background: #eef3ff; color: #4f46e5; padding-left: 30px;
+    }
     .sidebar .nav-link.active { background: #4f46e5; color: white !important; }
-    .content { margin-left: 260px; padding: 100px 40px 40px; }
-    .card-custom { background: white; border-radius: 16px; box-shadow: 0 8px 25px rgba(0,0,0,0.08); padding: 30px; }
+
+    /* Contenu principal */
+    .content {
+      margin-left: 260px;
+      padding: 100px 40px 40px;
+    }
+    .card-custom {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+      padding: 30px;
+    }
     .table th { background: #4f46e5; color: white; }
-    .btn-action { border-radius: 50px; padding: 6px 14px; font-size: 14px; }
   </style>
 </head>
 <body>
-  <nav class="navbar navbar-expand-lg">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="#">Gestion Étudiants <span class="text-primary">.</span></a>
-      <div class="d-flex align-items-center gap-3">
-        <span class="text-muted">Admin</span>
-        <a href="logout.php" class="btn btn-outline-danger rounded-pill px-4">Déconnexion</a>
+    <nav class="navbar navbar-expand-lg bg-white py-3 shadow-sm">
+    <div class="container">
+      <a class="navbar-brand fs-3 fw-bold" href="#">Système gestion des étudiants <span class="text-primary">.</span></a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navMenu">
+        <ul class="navbar-nav mx-auto ">
+          <li class="nav-item"><a class="nav-link active" href="indexadmin.php">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="Dashboard.php">Tableaux de bord</a></li>
+        </ul>
+        <div class="d-flex align-items-center gap-3">
+           
+          <a href="../logout.php" class="btn btn-outline-danger rounded-pill px-4">Déconnexion</a> 
+        </div>
       </div>
     </div>
   </nav>
@@ -71,14 +110,14 @@ $courses = $pdo->query("SELECT * FROM courses ORDER BY name ASC")->fetchAll(); /
   <aside class="sidebar">
     <h4>Admin Panel</h4>
     <ul class="nav flex-column">
-      <li class="nav-item"><a href="Dashboard.php" class="nav-link">Tableau de bord</a></li>
-      <li class="nav-item"><a href="etudiants.php" class="nav-link">Gérer étudiants</a></li>
-      <li class="nav-item"><a href="enseignants.php" class="nav-link">Gérer enseignants</a></li>
-      <li class="nav-item"><a href="cours.php" class="nav-link active">Gérer cours</a></li>
-      <li class="nav-item"><a href="notes.php" class="nav-link">Gérer notes</a></li>
-      <li class="nav-item"><a href="absence.php" class="nav-link">Absences</a></li>
+      <li class="nav-item"><a href="Dashboard.php" class="nav-link"><i class="fa fa-tachometer-alt"></i> Tableau de bord</a></li>
+      <li class="nav-item"><a href="etudiants.php" class="nav-link"><i class="fa fa-users"></i> Gérer étudiants</a></li>
+      <li class="nav-item"><a href="enseignants.php" class="nav-link "><i class="fa fa-chalkboard-teacher"></i> Gérer enseignants</a></li>
+      <li class="nav-item"><a href="cours.php" class="nav-link active"><i class="fa fa-book"></i> Gérer cours</a></li>
+      <li class="nav-item"><a href="notes.php" class="nav-link"><i class="fa fa-pen-to-square"></i> Gérer notes</a></li>
     </ul>
   </aside>
+
   <main class="content">
     <div class="container-fluid">
       <h2 class="mb-4 fw-bold text-dark">Gérer les cours</h2>

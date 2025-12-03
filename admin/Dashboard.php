@@ -149,28 +149,22 @@ try {
 </head>
 <body>
 
-  <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="#">
-        Gestion Étudiants <span class="text-primary">.</span>
-      </a>
+   <nav class="navbar navbar-expand-lg bg-white py-3 shadow-sm">
+    <div class="container">
+      <a class="navbar-brand fs-3 fw-bold" href="#">Système gestion des étudiants <span class="text-primary">.</span></a>
 
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
         <span class="navbar-toggler-icon"></span>
       </button>
 
       <div class="collapse navbar-collapse" id="navMenu">
-        <ul class="navbar-nav mx-auto">
-          <li class="nav-item"><a class="nav-link" href="indexadmin.php">Accueil</a></li>
-          <li class="nav-item"><a class="nav-link active fw-bold" href="Dashboard.php">Tableau de bord</a></li>
+        <ul class="navbar-nav mx-auto ">
+          <li class="nav-item"><a class="nav-link active" href="indexadmin.php">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="Dashboard.php">Tableaux de bord</a></li>
         </ul>
-
         <div class="d-flex align-items-center gap-3">
-          <span class="text-muted">Bonjour, <strong><?= htmlspecialchars($_SESSION['name'] ?? 'Admin') ?></strong></span>
-          <a href="logout.php" class="btn btn-outline-danger rounded-pill px-4">
-            <i class="fa fa-sign-out-alt"></i> Déconnexion
-          </a>
+           
+          <a href="../logout.php" class="btn btn-outline-danger rounded-pill px-4">Déconnexion</a> 
         </div>
       </div>
     </div>

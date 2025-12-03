@@ -7,7 +7,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'enseignant') {
     exit;
 }
 
-include 'Database.php';
+include '../Database.php';
 $pdo = connectDatabase();
 
 $teacher_id = $_SESSION['user_id'];
@@ -107,7 +107,6 @@ $students = $stmt->fetchAll(PDO::FETCH_GROUP); // groupe par cours
     </div>
   </nav>
 
-  <!-- Sidebar Enseignant -->
  <aside class="sidebar">
     <h4>Espace Enseignant</h4>
     <ul class="nav flex-column">
