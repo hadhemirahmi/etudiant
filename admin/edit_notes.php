@@ -1,21 +1,20 @@
 <?php
 session_start();
-// Vérifier que l'utilisateur est admin
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     header("Location: login.php");
     exit;
 }
 include '../Database.php';
 $pdo = connectDatabase();
-// Initialiser le message
+
 $message = '';
-// Vérifier si l'id de la note est passé
+
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
     header("Location: notes.php");
     exit;
 }
 $note_id = (int)$_GET['id'];
-// Récupérer les informations de la note
+
 $stmt = $pdo->prepare("SELECT * FROM notes WHERE id = ?");
 $stmt->execute([$note_id]);
 $note = $stmt->fetch();
@@ -24,7 +23,7 @@ if (!$note) {
     header("Location: notes.php");
     exit;
 }
-// Gestion du formulaire
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $student_id = (int)$_POST['student_id'];
     $course_id  = (int)$_POST['course_id'];
@@ -34,7 +33,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($student_id && $course_id && $grade >= 0 && $type && $date) {
         try {
-            // Mettre à jour la note
             $stmt = $pdo->prepare("UPDATE notes SET student_id = ?, course_id = ?, grade = ?, type = ?, date = ? WHERE id = ?");
             $stmt->execute([$student_id, $course_id, $grade, $type, $date, $note_id]);
 
@@ -49,9 +47,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $message = "<div class='alert alert-warning'>Tous les champs sont obligatoires et la note doit être positive.</div>";
     }
 }
-// Récupérer les étudiants
 $students = $pdo->query("SELECT id, name FROM users WHERE role='etudiant' ORDER BY name")->fetchAll();
-// Récupérer les cours  
+ 
 $courses = $pdo->query("SELECT id, name FROM courses ORDER BY name")->fetchAll();
 ?>
 <!DOCTYPE html>
@@ -61,7 +58,6 @@ $courses = $pdo->query("SELECT id, name FROM courses ORDER BY name")->fetchAll()
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Modifier la note - Admin</title>
 
-  <!-- Bootstrap -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -70,7 +66,6 @@ $courses = $pdo->query("SELECT id, name FROM courses ORDER BY name")->fetchAll()
     .navbar { background: #fff !important; box-shadow: 0 2px 15px rgba(0,0,0,0.06); position: fixed; top: 0; width: 100%; z-index: 1000; }
     .navbar-brand { font-size: 26px; font-weight: 700; color: #0d1b3e; }
 
-    /* Sidebar */
     .sidebar {
       width: 260px;
       background: #ffffff;

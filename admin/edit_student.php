@@ -43,22 +43,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_student'])) {
         try {
             $pdo->beginTransaction();
 
-            // Mettre à jour nom et email
             $stmt_update = $pdo->prepare("UPDATE users SET name = ?, email = ? WHERE id = ?");
             $stmt_update->execute([$name, $email, $student_id]);
 
-            // Mettre à jour mot de passe si rempli
             if (!empty($passwd)) {
                 $password_hashed = password_hash($passwd, PASSWORD_DEFAULT);
                 $stmt_pass = $pdo->prepare("UPDATE users SET password = ? WHERE id = ?");
                 $stmt_pass->execute([$password_hashed, $student_id]);
             }
 
-            // Supprimer anciens cours
             $stmt_del = $pdo->prepare("DELETE FROM enrollments WHERE student_id = ?");
             $stmt_del->execute([$student_id]);
 
-            // Ajouter les nouveaux cours
+
             $stmt_ins = $pdo->prepare("INSERT INTO enrollments (student_id, course_id) VALUES (?, ?)");
             foreach ($courses_selected as $course_id) {
                 $stmt_ins->execute([$student_id, (int)$course_id]);
@@ -66,8 +63,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_student'])) {
 
             $pdo->commit();
             $message = "<div class='alert alert-success'>Étudiant mis à jour avec succès !</div>";
-
-            // Mettre à jour la liste des cours pour le formulaire
             $student_courses = $courses_selected;
             header("Location: etudiants.php");
             exit;

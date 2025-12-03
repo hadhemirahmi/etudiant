@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-// Accès réservé admin
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     header("Location: login.php");
     exit;
@@ -12,18 +11,12 @@ $pdo = connectDatabase();
 
 $message = "";
 
-/* -------------------------------------------------------
-   Vérification de l'ID enseignant
--------------------------------------------------------- */
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
     die("ID enseignant invalide.");
 }
 
 $teacher_id = (int)$_GET['id'];
 
-/* -------------------------------------------------------
-   Récupération des informations de l'enseignant
--------------------------------------------------------- */
 $stmt = $pdo->prepare("
     SELECT 
         u.id,
@@ -40,22 +33,13 @@ $teacher = $stmt->fetch();
 if (!$teacher) {
     die("Enseignant introuvable.");
 }
-
-/* -------------------------------------------------------
-   Récupérer tous les cours
--------------------------------------------------------- */
 $courses = $pdo->query("SELECT id, name FROM courses ORDER BY name ASC")->fetchAll();
 
-/* -------------------------------------------------------
-   Récupérer cours assignés actuellement
--------------------------------------------------------- */
+
 $stmt2 = $pdo->prepare("SELECT course_id FROM course_assignments WHERE teacher_id = ?");
 $stmt2->execute([$teacher_id]);
 $assigned_courses = $stmt2->fetchAll(PDO::FETCH_COLUMN);
 
-/* -------------------------------------------------------
-   Traitement du formulaire
--------------------------------------------------------- */
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $name       = trim($_POST['name']);
@@ -69,23 +53,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         try {
             $pdo->beginTransaction();
 
-            // Mise à jour user
             $stmt_update = $pdo->prepare("
                 UPDATE users SET name = ?, email = ? WHERE id = ?
             ");
             $stmt_update->execute([$name, $email, $teacher_id]);
 
-            // Mise à jour teacher (département)
+
             $stmt_dep = $pdo->prepare("
                 UPDATE teachers SET department = ? WHERE user_id = ?
             ");
             $stmt_dep->execute([$department, $teacher_id]);
 
-            // Effacer les anciens cours
             $pdo->prepare("DELETE FROM course_assignments WHERE teacher_id = ?")
                 ->execute([$teacher_id]);
 
-            // Ajouter les nouveaux cours
             $stmt_add = $pdo->prepare("
                 INSERT INTO course_assignments (course_id, teacher_id) VALUES (?, ?)
             ");
@@ -97,8 +78,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $pdo->commit();
 
             $message = "<div class='alert alert-success'>Modifications enregistrées avec succès.</div>";
-
-            // Mise à jour pour recharger les données
             $assigned_courses = $selected_courses;
             $teacher['name'] = $name;
             $teacher['email'] = $email;

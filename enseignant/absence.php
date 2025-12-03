@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-// Vérification : seul un enseignant peut accéder
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'enseignant') {
     header("Location: login.php");
     exit;
@@ -12,21 +11,16 @@ $pdo = connectDatabase();
 
 $teacher_id = $_SESSION['user_id'];
 $message = '';
-
-// === Prise d'absence ===
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_absences'])) {
     $course_id = $_POST['course_id'];
     $date      = $_POST['date'];
-    $absents   = $_POST['absent'] ?? []; // tableau des étudiants absents
+    $absents   = $_POST['absent'] ?? [];
 
     try {
         $pdo->beginTransaction();
-
-        // On supprime les anciennes absences pour cette date et ce cours (pour éviter doublons)
         $del = $pdo->prepare("DELETE FROM absences WHERE course_id = ? AND date = ?");
         $del->execute([$course_id, $date]);
 
-        // On insère les nouvelles absences
         if (!empty($absents)) {
             $stmt = $pdo->prepare("INSERT INTO absences (student_id, course_id, date, teacher_id) VALUES (?, ?, ?, ?)");
             foreach ($absents as $student_id) {
@@ -42,7 +36,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_absences'])) {
     }
 }
 
-// === Récupérer les cours de l'enseignant ===
 $courses = $pdo->prepare("
     SELECT c.id, c.name 
     FROM courses c
@@ -53,7 +46,6 @@ $courses = $pdo->prepare("
 $courses->execute([$teacher_id]);
 $courses = $courses->fetchAll();
 
-// === Historique des absences saisies par l'enseignant ===
 $history = $pdo->prepare("
     SELECT DISTINCT a.date, c.name AS course_name, COUNT(a.student_id) AS nb_absents
     FROM absences a
@@ -97,7 +89,6 @@ $history = $history->fetchAll();
 </head>
 <body>
 
-  <!-- Navbar -->
   <nav class="navbar navbar-expand-lg bg-white py-3 shadow-sm">
     <div class="container">
       <a class="navbar-brand fs-3 fw-bold" href="#">systeme gestion des etudiants <span class="text-primary">.</span></a>
@@ -120,7 +111,7 @@ $history = $history->fetchAll();
     </div>
   </nav>
 
-  <!-- Sidebar -->
+
   <aside class="sidebar">
     <h4>Espace Enseignant</h4>
     <ul class="nav flex-column">
@@ -132,7 +123,6 @@ $history = $history->fetchAll();
     </ul>
   </aside>
 
-  <!-- Contenu principal -->
   <main class="content">
     <div class="container-fluid">
       <h2 class="mb-4 fw-bold text-dark"><i class="fa fa-calendar-times text-danger"></i> Prise d'absences</h2>
@@ -140,7 +130,7 @@ $history = $history->fetchAll();
       <?php if ($message) echo $message; ?>
 
       <div class="row g-4">
-        <!-- Formulaire de prise d'absence -->
+
         <div class="col-lg-8">
           <div class="card-custom">
             <h4 class="mb-4"><i class="fa fa-users-slash"></i> Marquer les absents</h4>

@@ -139,7 +139,6 @@ $courses = $pdo->query("SELECT id, name FROM courses ORDER BY name")->fetchAll()
 
       <div class="row g-4">
        
-        <!-- AJOUT ÉTUDIANT -->
         <div class="col-lg-5">
           <div class="card-custom mb-4">
             <h4 class="mb-4"><i class="fa fa-user-plus"></i> Ajouter un étudiant</h4>

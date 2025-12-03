@@ -8,16 +8,14 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
 include '../Database.php';
 $pdo = connectDatabase();
 
-// Initialiser $message pour éviter l'erreur
 $message = '';
 
-// Ajouter une note
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_note'])) {
     $student_id = $_POST['student_id'];
     $course_id  = $_POST['course_id'];
     $grade      = (float) $_POST['grade'];
     $type       = $_POST['type'];
-    $teacher_id = $_SESSION['user_id']; // l'admin qui ajoute
+    $teacher_id = $_SESSION['user_id']; 
 
     if (!empty($student_id) && !empty($course_id) && $grade >= 0 && $grade <= 20) {
         try {
@@ -32,7 +30,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_note'])) {
     }
 }
 
-// Récupérer les notes
 $notes = $pdo->query("
     SELECT n.id, n.grade, n.type, n.date,
            u.name AS student_name,
@@ -43,10 +40,8 @@ $notes = $pdo->query("
     ORDER BY n.date DESC
 ")->fetchAll();
 
-// Étudiants
 $students = $pdo->query("SELECT id, name FROM users WHERE role='etudiant' ORDER BY name")->fetchAll();
 
-// Cours
 $courses = $pdo->query("SELECT id, name FROM courses ORDER BY name")->fetchAll();
 ?>
 
@@ -57,7 +52,6 @@ $courses = $pdo->query("SELECT id, name FROM courses ORDER BY name")->fetchAll()
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gérer les notes - Admin</title>
 
-  <!-- Bootstrap -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 

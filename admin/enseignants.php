@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-// Vérification admin
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     header("Location: login.php");
     exit;
@@ -12,14 +11,9 @@ $pdo = connectDatabase();
 
 $message = "";
 
-/* -------------------------------------------------------
-   RÉCUPÉRATION DES COURS
--------------------------------------------------------- */
+
 $courses = $pdo->query("SELECT id, name FROM courses ORDER BY name ASC")->fetchAll();
 
-/* -------------------------------------------------------
-   AJOUT D'UN ENSEIGNANT
--------------------------------------------------------- */
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_teacher'])) {
 
     $name       = trim($_POST['name']);
@@ -33,21 +27,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_teacher'])) {
         try {
             $pdo->beginTransaction();
 
-            // Mot de passe par défaut
             $password = password_hash("default123", PASSWORD_DEFAULT);
-
-            // 1) Ajouter dans users
             $stmt = $pdo->prepare("INSERT INTO users (name, email, password, role)
                                    VALUES (?, ?, ?, 'enseignant')");
             $stmt->execute([$name, $email, $password]);
 
             $teacher_id = $pdo->lastInsertId();
 
-            // 2) Ajouter dans teachers
             $stmt2 = $pdo->prepare("INSERT INTO teachers (user_id, department) VALUES (?, ?)");
             $stmt2->execute([$teacher_id, $department]);
 
-            // 3) Assigner les cours dans course_assignments
             $stmt3 = $pdo->prepare("INSERT INTO course_assignments (course_id, teacher_id) VALUES (?, ?)");
 
             foreach ($selected_courses as $course_id) {
@@ -70,9 +59,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_teacher'])) {
     }
 }
 
-/* -------------------------------------------------------
-   LISTE ENSEIGNANTS + COURS ENSEIGNÉS
--------------------------------------------------------- */
 $teachers = $pdo->query("
     SELECT 
         u.id, 
@@ -157,8 +143,6 @@ $teachers = $pdo->query("
 <?= $message ?>
 
 <div class="row">
-
-<!-- Formulaire d'ajout -->
 <div class="col-lg-5">
     <div class="card-custom mb-4">
         <h4 class="mb-4"><i class="fa fa-user-plus"></i> Ajouter un enseignant</h4>
@@ -198,7 +182,6 @@ $teachers = $pdo->query("
     </div>
 </div>
 
-<!-- Liste des enseignants -->
 <div class="col-lg-7">
     <div class="card-custom">
         <h4 class="mb-4"><i class="fa fa-list"></i> Liste des enseignants (<?= count($teachers) ?>)</h4>
