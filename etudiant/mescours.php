@@ -3,7 +3,7 @@ session_start();
 
 // Vérification : seul un étudiant peut accéder
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'etudiant') {
-    header("Location: login.php");
+    header("Location: ../login.php");
     exit;
 }
 

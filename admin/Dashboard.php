@@ -26,8 +26,6 @@ try {
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tableau de bord - Admin</title>
-
-  <!-- Bootstrap + Icons -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
 
@@ -169,8 +167,6 @@ try {
       </div>
     </div>
   </nav>
-
-  <!-- Sidebar -->
   <aside class="sidebar">
     <h4>Admin Panel</h4>
     <ul class="nav flex-column">
@@ -202,14 +198,12 @@ try {
     </ul>
   </aside>
 
-  <!-- Main Content -->
   <main class="content">
     <div class="container-fluid">
       <h2 class="mb-2 fw-bold text-dark">Tableau de bord Administrateur</h2>
       <p class="text-muted mb-5">Vue d'ensemble du système de gestion des étudiants</p>
 
       <div class="row g-4">
-        <!-- Étudiants -->
         <div class="col-md-3">
           <div class="stat-card position-relative text-primary border-start border-primary border-5">
             <i class="fa fa-users stat-icon"></i>
@@ -217,8 +211,6 @@ try {
             <div class="stat-label">Étudiants inscrits</div>
           </div>
         </div>
-
-        <!-- Enseignants -->
         <div class="col-md-3">
           <div class="stat-card position-relative text-success border-start border-success border-5">
             <i class="fa fa-chalkboard-teacher stat-icon"></i>
@@ -226,8 +218,6 @@ try {
             <div class="stat-label">Enseignants</div>
           </div>
         </div>
-
-        <!-- Cours -->
         <div class="col-md-3">
           <div class="stat-card position-relative text-warning border-start border-warning border-5">
             <i class="fa fa-book-open stat-icon"></i>
@@ -235,8 +225,6 @@ try {
             <div class="stat-label">Cours disponibles</div>
           </div>
         </div>
-
-        <!-- Notes -->
         <div class="col-md-3">
           <div class="stat-card position-relative text-info border-start border-info border-5">
             <i class="fa fa-clipboard-check stat-icon"></i>

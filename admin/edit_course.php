@@ -10,7 +10,6 @@ $pdo = connectDatabase();
 $message = '';
 $course = null;
 
-// Récupérer les données du cours à modifier
 if (isset($_GET['id'])) {
     $course_id = (int)$_GET['id'];
     $stmt = $pdo->prepare("SELECT * FROM courses WHERE id = ?");
@@ -22,7 +21,6 @@ if (isset($_GET['id'])) {
     }
 }
 
-// Traitement de la modification
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_course'])) {
     $course_id = (int)$_POST['course_id'];
     $name = trim($_POST['course_name']);
@@ -32,7 +30,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_course'])) {
 
     if (!empty($name) && !empty($code) && $credits > 0) {
         try {
-            // Vérifier si le code existe déjà pour un autre cours
             $stmt = $pdo->prepare("SELECT id FROM courses WHERE code = ? AND id != ?");
             $stmt->execute([$code, $course_id]);
             $existing = $stmt->fetch();
@@ -43,11 +40,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_course'])) {
                 $stmt = $pdo->prepare("UPDATE courses SET name = ?, code = ?, credits = ?, description = ? WHERE id = ?");
                 $stmt->execute([$name, $code, $credits, $desc, $course_id]);
                 $message = '<div class="alert alert-success">Cours modifié avec succès !</div>';
-                
-                // Recharger les données du cours
                 $stmt = $pdo->prepare("SELECT * FROM courses WHERE id = ?");
                 $stmt->execute([$course_id]);
-                $course = $stmt->fetch(PDO::FETCH_ASSOC);
+                $course = $stmt->fetch();
             }
             header("Location: cours.php");
             exit;

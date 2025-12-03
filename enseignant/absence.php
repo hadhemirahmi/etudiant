@@ -7,7 +7,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'enseignant') {
     exit;
 }
 
-include 'Database.php';
+include '../Database.php';
 $pdo = connectDatabase();
 
 $teacher_id = $_SESSION['user_id'];
@@ -98,23 +98,37 @@ $history = $history->fetchAll();
 <body>
 
   <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg">
-    <div class="container-fluid">
-      <a class="navbar-brand fw-bold" href="#">Gestion Étudiants</a>
-      <div class="d-flex align-items-center gap-3">
-        <span class="text-muted">Bonjour, <strong><?= htmlspecialchars($_SESSION['name']) ?></strong></span>
-        <a href="logout.php" class="btn btn-outline-danger rounded-pill px-4">Déconnexion</a>
+  <nav class="navbar navbar-expand-lg bg-white py-3 shadow-sm">
+    <div class="container">
+      <a class="navbar-brand fs-3 fw-bold" href="#">systeme gestion des etudiants <span class="text-primary">.</span></a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navMenu">
+        <ul class="navbar-nav mx-auto ">
+          <li class="nav-item"><a class="nav-link active" href="indexenseignant.php">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="Dashboard.php">tableaux de bord</a></li>
+        </ul>
+
+
+        <div class="d-flex gap-3">
+         <a href="../logout.php" class="btn btn-outline-danger rounded-pill px-4">Déconnexion</a>
+        </div>
       </div>
     </div>
   </nav>
 
-  <!-- Sidebar Enseignant -->
+  <!-- Sidebar -->
   <aside class="sidebar">
-    <h4>Enseignant</h4>
+    <h4>Espace Enseignant</h4>
     <ul class="nav flex-column">
-      <li><a href="teacher_dashboard.php" class="nav-link"><i class="fa fa-tachometer-alt"></i> Tableau de bord</a></li>
-      <li><a href="absence.php" class="nav-link active"><i class="fa fa-calendar-times"></i> Prise d'absences</a></li>
-      <li><a href="teacher_notes.php" class="nav-link"><i class="fa fa-pen-to-square"></i> Saisir les notes</a></li>
+      <li><a href="Dashboard.php" class="nav-link "><i class="fa fa-tachometer-alt me-2"></i> Tableau de bord</a></li>
+      <li><a href="mescours.php" class="nav-link "><i class="fa fa-book me-2"></i> Mes cours</a></li>
+      <li><a href="mesetudiants.php" class="nav-link"><i class="fa fa-users me-2"></i> Mes étudiants</a></li>
+      <li><a href="absence.php" class="nav-link active"><i class="fa fa-calendar-times me-2"></i> Prise d'absences</a></li>
+      <li><a href="mesnotes.php" class="nav-link"><i class="fa fa-clipboard-check me-2"></i> Mes notes</a></li>
     </ul>
   </aside>
 
@@ -190,8 +204,6 @@ $history = $history->fetchAll();
             </form>
           </div>
         </div>
-
-        <!-- Historique -->
         <div class="col-lg-4">
           <div class="card-custom">
             <h4 class="mb-4"><i class="fa fa-history"></i> Historique</h4>

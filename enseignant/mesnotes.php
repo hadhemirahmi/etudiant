@@ -128,12 +128,24 @@ $notes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <body>
 
   <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg">
-    <div class="container-fluid">
-      <a class="navbar-brand fw-bold" href="Dashboard.php">Gestion Étudiants</a>
-      <div class="d-flex align-items-center gap-3">
-        <span class="text-muted">Bonjour, <strong><?= htmlspecialchars($teacher_name) ?></strong></span>
-        <a href="logout.php" class="btn btn-outline-danger rounded-pill px-4">Déconnexion</a>
+   <nav class="navbar navbar-expand-lg bg-white py-3 shadow-sm">
+    <div class="container">
+      <a class="navbar-brand fs-3 fw-bold" href="#">systeme gestion des etudiants <span class="text-primary">.</span></a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navMenu">
+        <ul class="navbar-nav mx-auto ">
+          <li class="nav-item"><a class="nav-link active" href="indexenseignant.php">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="Dashboard.php">tableaux de bord</a></li>
+        </ul>
+
+
+        <div class="d-flex gap-3">
+         <a href="../logout.php" class="btn btn-outline-danger rounded-pill px-4">Déconnexion</a>
+        </div>
       </div>
     </div>
   </nav>

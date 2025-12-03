@@ -1,7 +1,5 @@
 <?php
 session_start();
-
-// Vérification : seul un étudiant peut accéder
 if (!isset($_SESSION['user_id']) || ($_SESSION['role'] ?? '') !== 'etudiant') {
     header("Location: login.php");
     exit;
@@ -58,41 +56,83 @@ $total_absences = array_sum(array_column($stats, 'total_absences')) ?: 0;
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
   <style>
-    body {
-      background: #f7faff;
-      font-family: 'Poppins', sans-serif;
-    }
+  body {
+    background: #eef2f7;
+    font-family: 'Poppins', sans-serif;
+  }
 
-    
 
-    .card-custom {
-      background: white;
-      border-radius: 20px;
-      padding: 25px;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.06);
-      transition: 0.2s;
-    }
+  .navbar {
+    border-bottom: 1px solid #e5e7eb;
+  }
+  .navbar-brand {
+    font-size: 26px;
+  }
+  
 
-    .card-custom:hover {
-      transform: scale(1.01);
-    }
+  /* CARD STYLE */
+  .card-custom {
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 28px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+    transition: 0.25s ease;
+    border: none;
+  }
 
-    .total-badge {
-      background: #4f46e5;
-      color: white;
-      font-size: 36px;
-      font-weight: bold;
-      padding: 8px 20px;
-      border-radius: 50px;
-      display: inline-block;
-      margin-bottom: 10px;
-      box-shadow: 0 8px 18px rgba(79,70,229,0.25);
-    }
+  .card-custom:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px rgba(0,0,0,0.08);
+  }
 
-    .absence-date {
-      font-weight: 600;
-    }
-  </style>
+  /* BADGE TOTAL */
+  .total-badge {
+    background: linear-gradient(to right, #4f46e5, #6366f1);
+    color: #fff;
+    font-size: 42px;
+    font-weight: 700;
+    padding: 12px 28px;
+    border-radius: 50px;
+    margin-bottom: 12px;
+    box-shadow: 0 8px 22px rgba(79,70,229,0.3);
+  }
+
+  /* LIST ITEMS */
+  .list-group-item {
+    border: none;
+    border-bottom: 1px solid #f2f4f7;
+    padding: 16px 12px;
+  }
+  .list-group-item:last-child {
+    border-bottom: none;
+  }
+
+  /* TABLE */
+  table thead {
+    background-color: #f8f9ff !important;
+    font-size: 15px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .table-hover tbody tr:hover {
+    background-color: #f1f3ff;
+    cursor: pointer;
+  }
+
+  .absence-date {
+    font-weight: 600;
+    color: #4f46e5;
+  }
+
+  /* BADGE COURS */
+  .badge {
+    padding: 10px 16px;
+    font-size: 15px;
+    border-radius: 12px;
+  }
+</style>
+
 </head>
 
 <body>

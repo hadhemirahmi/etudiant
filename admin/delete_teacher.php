@@ -1,44 +1,64 @@
 <?php
 session_start();
 
-// Vérifier que l'utilisateur est admin
+// Accès réservé admin
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     header("Location: login.php");
     exit;
 }
 
-include '../Database.php';
+include "../Database.php";
 $pdo = connectDatabase();
 
-// Vérifier si l'id du teacher est passé
+/* -------------------------------------------------------
+   Vérification de l'ID enseignant
+-------------------------------------------------------- */
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
-    header("Location: enseignants.php");
-    exit;
+    die("ID enseignant invalide.");
 }
 
 $teacher_id = (int)$_GET['id'];
 
-// Vérifier que l'enseignant existe
-$stmt = $pdo->prepare("SELECT * FROM users WHERE id = ? AND role = 'enseignant'");
+/* -------------------------------------------------------
+   Vérifier que l'enseignant existe
+-------------------------------------------------------- */
+$stmt = $pdo->prepare("
+    SELECT u.id FROM users u
+    WHERE u.id = ? AND u.role = 'enseignant'
+");
 $stmt->execute([$teacher_id]);
-$teacher = $stmt->fetch();
+$exists = $stmt->fetch();
 
-if (!$teacher) {
-    header("Location: enseignants.php");
-    exit;
+if (!$exists) {
+    die("Erreur : enseignant introuvable.");
 }
 
+/* -------------------------------------------------------
+   Suppression propre + transaction
+-------------------------------------------------------- */
 try {
-    // Supprimer l'enseignant (supprime aussi la ligne dans teachers grâce à la FK)
-    $stmt = $pdo->prepare("DELETE FROM users WHERE id = ?");
-    $stmt->execute([$teacher_id]);
+    $pdo->beginTransaction();
 
-    // Redirection vers la liste avec message de succès
-    header("Location: enseignants.php?msg=Enseignant supprimé avec succès");
+    // 1. Supprimer ses cours assignés
+    $pdo->prepare("DELETE FROM course_assignments WHERE teacher_id = ?")
+        ->execute([$teacher_id]);
+
+    // 2. Supprimer entrée dans teachers
+    $pdo->prepare("DELETE FROM teachers WHERE user_id = ?")
+        ->execute([$teacher_id]);
+
+    // 3. Supprimer l’utilisateur (enseignant)
+    $pdo->prepare("DELETE FROM users WHERE id = ?")
+        ->execute([$teacher_id]);
+
+    $pdo->commit();
+
+    // Redirection après suppression
+    header("Location: enseignants.php?deleted=1");
     exit;
 
 } catch (PDOException $e) {
-    // En cas d'erreur
-    echo "Erreur : " . $e->getMessage();
+    $pdo->rollBack();
+    die("Erreur lors de la suppression : " . htmlspecialchars($e->getMessage()));
 }
 ?>

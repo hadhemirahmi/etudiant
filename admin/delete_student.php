@@ -1,44 +1,68 @@
 <?php
 session_start();
 
-// Vérifier si l'utilisateur est admin
+// Accès réservé admin
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     header("Location: login.php");
     exit;
 }
 
-include '../Database.php';
+include "../Database.php";
 $pdo = connectDatabase();
 
-// Vérifier si l'id de l'étudiant est passé
+/* -------------------------------------------------------
+   Vérification de l'ID étudiant
+-------------------------------------------------------- */
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
-    header("Location: etudiants.php");
-    exit;
+    die("ID étudiant invalide.");
 }
 
 $student_id = (int)$_GET['id'];
 
-// Vérifier que l'étudiant existe et que c'est bien un role 'etudiant'
-$stmt = $pdo->prepare("SELECT * FROM users WHERE id = ? AND role = 'etudiant'");
+/* -------------------------------------------------------
+   Vérifier que l’étudiant existe
+-------------------------------------------------------- */
+$stmt = $pdo->prepare("
+    SELECT id FROM users 
+    WHERE id = ? AND role = 'etudiant'
+");
 $stmt->execute([$student_id]);
-$student = $stmt->fetch();
+$exists = $stmt->fetch();
 
-if (!$student) {
-    header("Location: etudiants.php");
-    exit;
+if (!$exists) {
+    die("Erreur : étudiant introuvable.");
 }
 
-// Supprimer l'étudiant
+/* -------------------------------------------------------
+   Suppression propre + transaction
+-------------------------------------------------------- */
 try {
-    $stmt = $pdo->prepare("DELETE FROM users WHERE id = ?");
-    $stmt->execute([$student_id]);
+    $pdo->beginTransaction();
 
-    // Redirection avec message
-    $_SESSION['message'] = "Étudiant '{$student['name']}' supprimé avec succès !";
-    header("Location: etudiants.php");
+    // 1. Supprimer ses inscriptions aux cours
+    $pdo->prepare("DELETE FROM enrollments WHERE student_id = ?")
+        ->execute([$student_id]);
+
+    // 2. Supprimer ses absences (si table attendance existe)
+    $pdo->prepare("DELETE FROM attendance WHERE student_id = ?")
+        ->execute([$student_id]);
+
+    // 3. Supprimer ses notes (si table grades existe)
+    $pdo->prepare("DELETE FROM grades WHERE student_id = ?")
+        ->execute([$student_id]);
+
+    // 4. Supprimer le compte utilisateur
+    $pdo->prepare("DELETE FROM users WHERE id = ? AND role = 'etudiant'")
+        ->execute([$student_id]);
+
+    $pdo->commit();
+
+    // Redirection
+    header("Location: etudiants.php?deleted=1");
     exit;
+
 } catch (PDOException $e) {
-    $_SESSION['message'] = "Erreur lors de la suppression : " . $e->getMessage();
-    header("Location: etudiants.php");
-    exit;
+    $pdo->rollBack();
+    die("Erreur lors de la suppression : " . htmlspecialchars($e->getMessage()));
 }
+?>

@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_course'])) {
         $message = '<div class="alert alert-warning">Tous les champs obligatoires doivent être remplis.</div>';
     }
 }
-$courses = $pdo->query("SELECT * FROM courses ORDER BY name ASC")->fetchAll(); // ← $pdo bien utilisé
+$courses = $pdo->query("SELECT * FROM courses ORDER BY name ASC")->fetchAll(); 
 ?>
 
 <!DOCTYPE html>

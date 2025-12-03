@@ -67,9 +67,9 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'enseignant') {
         </ul>
 
 
-        <div class="d-flex gap-3">
-          <a href="login.php" class="btn btn-light px-4 py-2 rounded-pill fw-semibold">Sign In</a>
-          <a href="register.php" class="btn btn-primary px-4 py-2 rounded-pill fw-semibold">Sign Up</a>
+        <div class="d-flex align-items-center gap-3">
+           
+          <a href="../logout.php" class="btn btn-outline-danger rounded-pill px-4">Déconnexion</a>
         </div>
       </div>
     </div>
